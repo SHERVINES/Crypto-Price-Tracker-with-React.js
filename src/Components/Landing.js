@@ -1,47 +1,60 @@
-import React, { useEffect, useState } from 'react';
-
-
+import React, { useEffect, useState } from "react";
+//Styles
+import styles from "./Landing.module.css"
 //API
-import { getCoin } from '../Services/api';
+import { getCoin } from "../Services/api";
 
 //Components
-import Loading from './Loading';
-import Coin from './Coin';
+import Loading from "./Loading";
+import Coin from "./Coin";
 
 const Landing = () => {
+  const [coins, setCoins] = useState([]);
+  const [search, setSearch] = useState("");
 
-    const [coins,setCoins] = useState([])
-    const [search,setSearch] = useState("")
-
-useEffect(()=>{
-    const fetchAPI =async () => {
-    
-        const data = await getCoin() 
-    setCoins(data);  
-    }
+  useEffect(() => {
+    const fetchAPI = async () => {
+      const data = await getCoin();
+      setCoins(data);
+    };
     fetchAPI();
-},[])
+  }, []);
 
-const searchHandler = event =>{
-    setSearch(event.target.value)
-}
+  const searchHandler = (event) => {
+    setSearch(event.target.value);
+  };
 
-const searchedCoins = coins.filter(coin=> coin.name.toLowerCase().includes(search.toLowerCase()) );
+  const searchedCoins = coins.filter((coin) =>
+    coin.name.toLowerCase().includes(search.toLowerCase())
+  );
 
-
-return (
-        <>
-            <input type="text" placeholder="Search" value={search} onChange={searchHandler} />
-        {
-            coins.length ?
-            <div>
-        {searchedCoins.map(coin => <Coin key={coin.id} name={coin.name} image={coin.image} symbol={coin.symbol} price={coin.current_price} marketCap={coin.market_cap} priceChange={coin.price_change_percentage_24h} />)}    
-        </div> :
-            <Loading />
-
-        }
-        </>
-    );
+  return (
+    <>
+      <input className={styles.input}
+        type="text"
+        placeholder="Search"
+        value={search}
+        onChange={searchHandler}
+      />
+      {coins.length ? (
+        <div className={styles.coinContainer}>
+          {searchedCoins.map((coin) => (
+            <Coin
+              key={coin.id}
+              name={coin.name}
+              image={coin.image}
+              symbol={coin.symbol}
+              price={coin.current_price}
+              marketCap={coin.market_cap}
+              priceChange={coin.price_change_percentage_24h}
+            />
+          ))}
+        </div>
+      ) : (
+        <Loading />
+      )}
+    </>
+  );
 };
 
 export default Landing;
